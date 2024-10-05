@@ -31,58 +31,42 @@ Capture screenshots of the waveform and save the simulation logs to include in y
 
 Verilog Code for Traffic Light Controller
 
-// traffic_light_controller.v
-module traffic_light_controller (
-    input wire clk,
-    input wire reset,
-    output reg [2:0] lights  // 3-bit output: [2]=Red, [1]=Yellow, [0]=Green
-);
-    // Define states
-    typedef enum reg [1:0] {
-        GREEN = 2'b00,
-        YELLOW = 2'b01,
-        RED = 2'b10
-    } state_t;
+//module traffic_light(clk, rst, light);
+  input clk, rst;
+  output reg [2:0] light;
 
-    state_t current_state, next_state;
-    reg [3:0] counter;  // Timer counter
-
-    // State transition based on counter
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            current_state <= GREEN;
-            counter <= 0;
-        end else begin
-            if (counter == 4'd9) begin
-                current_state <= next_state;
-                counter <= 0;
-            end else begin
-                counter <= counter + 1;
-            end
+  parameter [1:0] S0 = 2'b00,
+   S1 = 2'b01, 
+   S2 = 2'b10;
+  parameter [2:0] Red = 3'b100,
+   Yellow = 3'b010, 
+   Green = 3'b001;
+  
+  reg [1:0] state;
+  
+  always @(posedge clk ) begin
+    if (rst) begin
+      light <= 3'b0;
+      state <= S0;  
+    end
+    else begin
+      case (state)
+        S0: begin
+          light <= Green;
+          state <= S1;
         end
+        S1: begin
+          light <= Yellow;
+          state <= S2;
+        end
+        S2: begin
+          light <= Red;
+          state <= S0;
+        end
+        default: light <= 3'b0;
+      endcase
     end
-
-    // Next state logic and output control
-    always @(*) begin
-        case (current_state)
-            GREEN: begin
-                lights = 3'b001;  // Green light on
-                next_state = YELLOW;
-            end
-            YELLOW: begin
-                lights = 3'b010;  // Yellow light on
-                next_state = RED;
-            end
-            RED: begin
-                lights = 3'b100;  // Red light on
-                next_state = GREEN;
-            end
-            default: begin
-                lights = 3'b000;  // All lights off
-                next_state = GREEN;
-            end
-        endcase
-    end
+  end
 endmodule
 
 Testbench for Traffic Light Controller
@@ -128,6 +112,10 @@ module traffic_light_controller_tb;
     end
 
 endmodule
+
+**Output Waveform:**
+
+![Screenshot (241)](https://github.com/user-attachments/assets/8aa8062a-aa6b-45b9-a221-9b9406315e32)
 
 
 Conclusion
