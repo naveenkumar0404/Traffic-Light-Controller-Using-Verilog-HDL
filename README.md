@@ -163,11 +163,7 @@ Time=905000 | Lights (R Y G) = 001
 <br>
 <br>
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
+
 
 ## Output Waveform:
 
